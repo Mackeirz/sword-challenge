@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  api:
+    container_name: account_maintainance_api
+    build: .
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - broker
+    volumes:
+      - ./:/usr/src/sword-challenge
+    networks:
+      - account_maintainance_network
+  
+  db:
+    container_name: account_maintainance_db
+    image: "mysql:latest"
+    environment:
+      MYSQL_ROOT_PASSWORD: jsG2a8!9A4jC
+      MYSQL_DATABASE: account_maintainance
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    networks:
+      - account_maintainance_network
+
+  # RabbitMQ container service
+  #! http://localhost:15672 { user: guest, password: guest }
+  broker:
+    container_name: account_maintainance_broker
+    image: rabbitmq:3.10.7-management-alpine
+    volumes:
+      - "rabbitmq_data:/data"
+    expose:
+      - "5672"
+      - "15672"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - account_maintainance_network
+
+networks:
+  account_maintainance_network:
+
+volumes:
+  rabbitmq_data:
